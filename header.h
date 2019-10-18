@@ -17,3 +17,10 @@
 #define MATCH_7 ((ar[x][y] == '#' && ar[x + 1][y + 2] == '#' && ar[x + 1][y + 1] == '#' && ar[x][y + 1] == '#') || (ar[x][y] == '#' && ar[x + 1][y] == '#' && ar[x + 1][y - 1] == '#' && ar[x + 2][y - 1] == '#'))
 
 #endif
+// MATCH_1  ----
+// MATCH_2  ::
+// MATCH_3  .:.
+// MATCH_4  :..
+// MATCH_5  ..:
+// MATCH_6  -|_
+// MATCH_2  _|-
