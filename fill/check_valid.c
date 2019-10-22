@@ -1,35 +1,51 @@
 #include "header.h"
 
-int		ft_match(char **ar, int x, int y)
+int		ft_match(char *ar)
 {
-	
-	while(x < 4)
-	{
-		if(ft_strchr(ar[x], '#') == NULL)
-			i++;
-		else
-		{
-			while(
-		
+	char s[8];
+	s == NULL;
+	(MATCH_1 > 0) && s = "00010203";
+	(MATCH_2 > 0) && s = "00102030";
+	(MATCH_3 > 0) && s = "00100111";
+	(MATCH_4 > 0) && s = "";
+	(MATCH_5 > 0) && s = "";
+	(MATCH_6 > 0) && s = "";
+	(MATCH_7 > 0) && s = "";
+	(MATCH_8 > 0) && s = "";
+	(MATCH_9 > 0) && s = "";
+	(MATCH_10 > 0) && s = "";
+	(MATCH_11 > 0) && s = "";
+	(MATCH_12 > 0) && s = "";
+	(MATCH_13 > 0) && s = "";
+	(MATCH_14 > 0) && s = "";
+	(MATCH_15 > 0) && s = "";
+	(MATCH_16 > 0) && s = "";
+	(MATCH_17 > 0) && s = "";
+	(MATCH_18 > 0) && s = "";
+	(MATCH_19 > 0) && s = "";
+	(s == NULL) ? return (0) : return (1);
+}
 
 int		ft_check(char *b)
 {
 	char c[21];
-	t_xy *c;
-	static char s[546];
-	s = b;
-	char ar[3][3]
-
+	char ar[21]
+	int ret;
 
 	while(*b)
 	{
-		ar[0] = ft_strsub(b, 0, 4);
-		ar[1] = ft_strsub(b, 5, 4);
-		ar[2] = ft_strsub(b, 10, 4);
-		ar[3] = ft_strsub(b, 15, 4);
-	   	if(ft_match(ar, 0, 0) == 0)
+		ar = ft_strsub(b, 0, 21);
+		
+		puts(ar);
+		ret = ft_strnchr(ar, '#') - ft_strchr(ar, '#');
+		printf("%d", ret);
+		while(ar != '#')
+			ar++;
+		c = ft_strsub(ar, 0, ret);
+	   	if(ft_match(c) == 0);
 			return (0);
 		free(ar);
+		free(c);
 		*(b + 21);
 	}
 	return (1);
@@ -58,6 +74,4 @@ int	check_valid(int fd)
 	(count != 0) && return (0);
 	return (ft_check(b));
 }
-	 
-		
-	
+
