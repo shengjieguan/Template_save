@@ -28,25 +28,25 @@ int		ft_match(char *ar)
 
 int		ft_check(char *b)
 {
-	char c[21];
-	char ar[21]
+	char *c;
+	char *ar;
 	int ret;
 
 	while(*b)
 	{
 		ar = ft_strsub(b, 0, 21);
-		
+
 		puts(ar);
-		ret = ft_strnchr(ar, '#') - ft_strchr(ar, '#');
+		ret = ft_strrchr(ar, '#') - ft_strchr(ar, '#');
 		printf("%d", ret);
-		while(ar != '#')
+		while(*ar != '#')
 			ar++;
 		c = ft_strsub(ar, 0, ret);
-	   	if(ft_match(c) == 0);
-			return (0);
+//	   	if(ft_match(c) == 0);
+//			return (0);
 		free(ar);
 		free(c);
-		*(b + 21);
+		b += 21;
 	}
 	return (1);
 }
@@ -58,8 +58,8 @@ int	check_valid(int fd)
 	int count;
 	int i = -1;
 
-	(fd < 0) ? return (0) : ret = read(fd, b, 546);
-	(ret > 545 || ret < 19) && return (0);
+	fd < 0 ? return (0) : ret = read(fd, b, 546);
+	(ret > 545 || ret < 19) && (return (0))
 	((ret + 1) % 21) ? return (0) : count = ((ret + 1) / 21) * 4;
 	while (ret--)
 	{
@@ -74,4 +74,3 @@ int	check_valid(int fd)
 	(count != 0) && return (0);
 	return (ft_check(b));
 }
-
