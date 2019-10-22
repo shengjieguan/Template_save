@@ -92,4 +92,3 @@ int		parse_file(int fd)
 		return (0);
 	return (1);
 }
-
