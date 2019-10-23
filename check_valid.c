@@ -54,23 +54,30 @@ int		check_valid(char *b)
 }
 int		tetri_are_valid(int ret, int hash_count, char *buf)
 {
-	while (ret > 0)
+	char **s;
+	char tmp[556];
+	if((ret + 1) % 21 != 0)
+		return (0);
+	while (--ret > 0)
 	{
-		if (((ret + 1) % 21 == 0 || ret % 5 == 4) && buf[ret] != '\n')
+		if((ret + 1) % 21 == 0 && buf[ret] != '\n')
 			return (0);
-		else if (ret % 5 < 4)
-		{
-			if (buf[ret] != '#' && buf[ret] != '.')
-				return (0);
-			if (buf[ret] == '#')
-				hash_count--;
-		}
-		ret--;
+		if(buf[ret] != '.' || buf[ret] != '#' || buf[ret] != '\n')
+			return (0);
 	}
-	printf("%d", hash_count);
-	if (hash_count == 0)
-		return(check_valid(buf));
-	return (0);
+	s = ft_strsplit(b, '\n');
+	while(*s)
+	{
+		if(ft_strlen(*s) != 4)
+			return 0;
+		s++;
+	}
+	tmp == NULL;
+	while(--s)
+		ft_strcat(*s, tmp);
+
+
+	return(check_valid(buf));
 }
 int		parse_file(int fd)
 {
@@ -92,3 +99,4 @@ int		parse_file(int fd)
 		return (0);
 	return (1);
 }
+
