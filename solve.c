@@ -92,7 +92,7 @@ int recursion(char **tetri_arr, char **map, int size)
 			if(overlap(map, tetri_arr[i], x, y))
 			{
 				place(tetri_arr[i], map, character[i], x, y);
-				if (recursion((tetri_arr[i + 1], map, size) == 1)
+				if (recursion(&tetri_arr[i + 1], map, size) == 1)
 					return (1);
 				else
 					place(tetri_arr[i], map, '.', x, y);
