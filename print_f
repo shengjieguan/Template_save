@@ -1,0 +1,44 @@
+void	collect_f(t_printf *pr)
+{
+	long double	num;
+	char		s[ft_abs(pr->precision_field) + pr->width_field + 64];
+	char		t_s[ft_abs(pr->precision_field) + pr->width_field + 64];
+	int len;
+
+	s[0] = 0;
+	t_s[0] = 0;
+	if (!ft_strcmp(arg->length, "L") == NULL)
+		num = va_arg(pr->arguments, long double);
+	else
+		num = va_arg(pr->arguments, double);
+	(arg->pres_nb == -1) && (arg->pres_nb = 6);
+
+
+//if (num < 0)
+	//	ft_strcpy(s, "-");
+//	(arg->flag_plus && num >= 0) && write(1, "+", 1) && arg->len++;
+//	if (num >= 0 && !arg->flag_plus && pr->flag.space) 
+//		write(1, " ", 1) && arg->len++;
+//	ft_ftoa(num, t_s, pr->precision_field);
+//	if (pr->precision_field == 0 && pr->flag.hash == true)
+//		ft_strcat(t_s, ".");
+//	f_append_buffer(pr, s, t_s);////////////
+//	len = ft_strlen(t_s);
+//	pr->var.precision = ft_pad(pr->precision_field, len);
+//	pr->var.width = ft_pad(pr->width_field, len + pr->var.precision);
+//	if (pr->flag.plus == true || pr->flag.space == true || s[0] == '-')
+//		if (pr->var.width > 0)
+//			pr->var.width--;
+//	if (pr->flag.zero == true && pr->var.width >= 0)
+//		ft_strcat_loop(s, pr->var.width, "0");
+//	else if (pr->flag.zero == false && pr->flag.minus == false)
+//		append_to_buffer_loop(pr, pr->var.width, " ");
+//	else if (pr->flag.minus == true)
+//		ft_strcat_loop(t_s, pr->var.width, " ");
+//	if (pr->var.precision >= 0)
+//		ft_strcat_loop(s, pr->var.precision, "0");
+//	ft_strcat(s, t_s);
+//	append_to_buffer(pr, s);
+}
+//https://blog.csdn.net/qq_32040767/article/details/77978303
+//https://github.com/mohammadbutt/42_ft_printf/blob/master/srcs/mini_libft/ft_ftoa.c
