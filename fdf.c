@@ -9,42 +9,6 @@
 #define WIN_WID 1000
 #define WIN_HEI 1000
 
-// typedef struct    s_list_map
-// {
-//     struct s_list_map    *next;
-//     int            data;
-// }                t_list_map;
-
-// typedef	struct	s_map
-// {
-// 	int			x;
-// 	int			y;
-// 	t_list_map  **map;
-// }	
-// 			t_map;
-// t_list_map    *ft_create_elem(int data)
-// {
-//     t_list_map    *temp;
-
-//     temp = malloc(sizeof(t_list_map));
-//     temp->data = data;
-//     temp->next = NULL;
-//     return (temp);
-// }
-// void    ft_list_push_back(t_list_map **begin_list, int data)
-// {
-//     t_list_map    *current;
-
-//     current = *begin_list;
-//     if (!current)
-//     {
-//         *begin_list = ft_create_elem(data);
-//         return ;
-//     }
-//     while (current->next != 0)
-//         current = current->next;
-//     current->next = ft_create_elem(data);
-// }
 typedef struct s_map
 {
 	double center_x;
@@ -66,7 +30,7 @@ typedef struct s_mlx
 {
 	void	*mlx;
 	void	*window;
-	void	*img;
+	void	*img; // equel to *ptr
 	char	*data;
 	t_map 	*map[99999];
 	int		map_width;
@@ -74,8 +38,6 @@ typedef struct s_mlx
 	int		count_point;
 	int		map_num_max;
 	int		map_num_min;
-//	int		window_width;
-//	int		window_height;
 	t_image	*image;
 }				t_mlx;
 
@@ -87,37 +49,8 @@ void	init(t_mlx *mlx)
 	mlx->map_height = -1;
 	mlx->map_num_max = 0;
 	mlx->map_num_min = 0;
-//	mlx->window_width = 1800;
-//	mlx->window_height = 800;
-
 }
-// int		ft_countstr(char **s)
-// {
-// 	int i;
-// 	int j;
 
-// 	j = 0;
-// 	i = 0;
-// 	while(s[j][i])
-// 	{
-// 		i = 0;
-// 		while(s[j][i])
-// 		{
-// 			if(s[j][i] == '-')
-// 				i++;
-// 			while(ft_isdigit(s[j][i]))
-// 				i++;
-// 			if(s[j][i])
-// 				return (0);
-// 		}
-// 		j++;
-// 	}
-// 	return (j);
-// }
-// void	line(int x0, int y0, int x, int y)
-// {
-
-// }
 void	move_map_to_center(t_mlx *mlx)
 {
 	int i;
@@ -209,29 +142,12 @@ void	line(t_map *cur, t_map *next, t_mlx *mlx)
 }
 void	draw_line(t_mlx *mlx)
 {
-	// int x;
-	// int y;
-	// t_map p1;
-	// t_map p2;
-	// int
-	// x = 0;
-	// y = 0;
+	
 	int i;
 
 	i = 0;
 	move_map_to_center(mlx);
-	// while(y <= mlx->map_height)
-	// {
-	// 	x = 0;
-	// 	while(x <= mlx->map_width)
-	// 	{
-	// 		if (x + 1 <= mlx->map_width)
-	// 			line(mlx->map[y * mlx->map_height + x], );
-	// 		else if(y + 1 <= mlx->map_height)
-	// 			line(x, y, 0, y + 1);
-	// 	}
-	// 	y++;
-	// }
+	
 	while (i <= mlx->count_point)
 	{
 		if(mlx->map[i]->x + 1 <= mlx->map_width)
