@@ -1,0 +1,103 @@
+#include <sys/types.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+typedef struct s_ls
+{
+    struct s_ls *next;
+    char *filename;
+
+}                t_ls;
+
+void    print_ls(t_ls *ls)
+{
+    while(ls)
+    {
+        puts(ls->filename);
+        ls = ls->next;
+    }
+}
+void    add_new_node(char *filename, t_ls *ls)
+{
+    while(ls->next)
+        ls = ls->next;
+    ls->next->filename = filename;
+    ls->next->next = NULL;
+}
+
+void    add_to_linklist(char *filename, t_ls *ls)
+{
+    if(ls->filename == NULL)
+        ls->filename = filename;
+    else
+        add_new_node(filename, ls);
+}
+int    main()
+{
+    t_ls    ls;
+    struct dirent *ptr;
+    ls.next = NULL;
+    ls.filename = NULL;
+    if(1)
+    {
+        add_to_linklist("ss",&ls);
+    }
+    if(1)
+    {
+        add_to_linklist("tt",&ls);
+    }
+    print_ls(&ls);
+}
+..............................................................................................
+#include <sys/types.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+typedef struct s_ls
+{
+	struct s_ls *next;
+	char *filename;
+
+}				t_ls;
+
+void	print_ls(t_ls *ls)
+{
+	while(ls)
+	{
+		puts(ls->filename);
+		ls = ls->next;
+	}
+}
+void	add_new_node(char *filename, t_ls *ls)
+{
+	while(ls->next)
+		ls = ls->next;
+	ls->next->filename = filename;
+	ls->next->next = NULL;
+}
+
+void	add_to_linklist(char *filename, t_ls *ls)
+{
+	if(ls->filename == NULL)
+		ls->filename = filename;
+	else
+		add_new_node(filename, ls);
+}
+int	main(int ar, char **av)
+{
+	DIR *dir;
+	struct dirent *ptr;
+	t_ls	ls;
+
+	ls.next = NULL;
+	ls.filename = NULL;
+	dir = opendir(".");
+	while((ptr = readdir(dir)) > 0)
+	{
+		add_to_linklist(strdup(ptr->d_name),&ls);
+	}
+	print_ls(&ls);
+	closedir(dir);
+}
