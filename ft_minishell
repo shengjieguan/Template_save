@@ -9,6 +9,7 @@
 #include <fcntl.h>
 # include "libft/libft.h"
 
+char **envv;
 typedef void    (*blt_func)(char *, char **);
 
 char *find_env(char **envv)
@@ -35,6 +36,11 @@ void    ft_pwd(char *command, char **envv)
     (void)command;
     (void)envv;
 
+}
+void       ft_echo(char *command, char **envv)
+{
+    command += 5;
+    ft_putendl(command);
 }
 void       ft_cd(char *command, char **envv)
 {
@@ -63,13 +69,8 @@ void       ft_setenv(char *command, char **envv)
     char **split;
 
     command += 7;
-    // if(ft_strchr(command, '='))
         split = ft_strsplit(command, '=');
-    // else
-    // {
-    //     puts("error");
-    //     return ;
-    // }
+    
             
     while(*envv)
     {
@@ -110,7 +111,7 @@ void       ft_env(char *command, char **envv)
         envv++;
     }
 }
-static blt_func     *g_dispatch= (blt_func[]){ft_pwd, ft_cd, ft_exit, ft_env, ft_setenv, ft_unsetenv};
+static blt_func     *g_dispatch= (blt_func[]){ft_pwd, ft_cd, ft_exit, ft_env, ft_setenv, ft_unsetenv, ft_echo};
 
 void    exec_command(char *line, char **envv)
 {
@@ -123,10 +124,22 @@ void    exec_command(char *line, char **envv)
     (!ft_strcmp(line, "env")) && (i = 3);
     (!ft_strncmp(line, "setenv ", 7)) && (i = 4);
     (!ft_strncmp(line, "unsetenv ", 9)) && (i = 5);
+    (!ft_strncmp(line, "echo ", 5)) && (i = 6);
 
 
     printf("%d",i);
     g_dispatch[i](line, envv);
+}
+void    split_command(char *command, char **envv)
+{
+    char **cmd;
+    cmd = ft_strsplit(command, ';');
+    while(*cmd)
+    {
+        exec_command(*cmd, envv);
+        cmd++;
+    }
+        
 }
 void    copy_environ(char **envv, char **environ)
 {
@@ -143,14 +156,14 @@ void    copy_environ(char **envv, char **environ)
 int main(int ar, char **av, char **environ)
 {
     char *line;
-    char **envv;
     //env = find_env(envv);
     copy_environ(envv, environ);
     while(1)
     {
         get_next_line(0, &line);
-        exec_command(line, envv);
+        split_command(line, envv);
     }
     return (0);
 
 }
+
