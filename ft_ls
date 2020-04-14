@@ -1,0 +1,363 @@
+#include <sys/types.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <pwd.h>
+#include <grp.h>
+#include <time.h>
+#include <string.h>
+
+
+typedef struct s_ls
+{
+	struct s_ls *next;
+	char *filename;
+	char *user;
+	char *group;
+	char *time;
+	nlink_t	nlink;
+	off_t size;
+	char mode[12];
+	time_t	mtime;
+}				t_ls;
+
+
+char		*stat_time(char *src)
+{
+	int n;
+	char *d;
+
+	n = strlen(src) - 9;
+	d = (char*)malloc(n);
+	while(--n >= 0)
+		d[n] = src[n];
+	return (d);
+}
+char		ft_file_type(int m)
+{
+	if ((m & 61440) == 49152)
+		return ('s');
+	if ((m & 61440) == 40960)
+		return ('l');
+	if ((m & 61440) == 32768)
+		return ('-');
+	if ((m & 61440) == 24576)
+		return ('b');
+	if ((m & 61440) == 16384)
+		return ('d');
+	if ((m & 61440) == 8192)
+		return ('c');
+	return ('p');
+}
+void		stat_mode(char *mode, int m)
+{
+	
+	mode[0] = ft_file_type(m);
+	mode[1] = (m & 256) ? 'r' : '-';
+	mode[2] = (m & 128) ? 'w' : '-';
+	mode[3] = (m & 64) ? 'x' : '-';
+	if (m & 2048)
+		mode[3] = mode[3] == 'x' ? 's' : 'S';
+	mode[4] = (m & 32) ? 'r' : '-';
+	mode[5] = (m & 16) ? 'w' : '-';
+	mode[6] = (m & 8) ? 'x' : '-';
+	if (m & 1024)
+		mode[6] = mode[6] == 'x' ? 's' : 'S';
+	mode[7] = (m & 4) ? 'r' : '-';
+	mode[8] = (m & 2) ? 'w' : '-';
+	mode[9] = (m & 1) ? 'x' : '-';
+	if (m & 512)
+		mode[9] = mode[9] == 'x' ? 't' : 'T';
+	mode[10] = ' ';
+	mode[11] = '\0';
+}
+
+t_ls		*ft_create_elem(void *data)
+{
+	t_ls	*tmp;
+	struct stat stat;
+
+	if (!(tmp = (t_ls *)malloc(sizeof(t_ls))))
+		return (NULL);
+	tmp->filename = data;
+	lstat(data, &stat);
+	stat_mode(tmp->mode, stat.st_mode);
+	tmp->user = getpwuid(stat.st_uid)->pw_name;
+	tmp->group = getgrgid(stat.st_gid)->gr_name;
+	tmp->nlink = stat.st_nlink;
+	tmp->size = stat.st_size;
+	tmp->time = stat_time((ctime(&stat.st_mtime)) + 4);
+	tmp->next = NULL;
+	tmp->mtime = stat.st_mtime;
+	
+	return (tmp);
+}
+void	create_linklist(t_ls **begin_list, void *data)
+{
+	t_ls	*list;
+
+	list = *begin_list;
+	if (list)
+	{
+		while (list->next)
+			list = list->next;
+		list->next = ft_create_elem(data);
+	}
+	else
+		*begin_list = ft_create_elem(data);
+}
+
+void	print_part(t_ls *ls, char *flag)
+{
+
+	while(ls)
+	{
+		if((flag != NULL && ls->filename[0] == '.' && !strchr(flag, 'a')) 
+			|| (flag == NULL && ls->filename[0] == '.'))
+			ls = ls->next;
+		else
+		{
+			printf("%s\n", ls->filename);
+			ls = ls->next;
+		}	
+	}
+}
+
+void	print_whole(t_ls *ls, char *flag)
+{
+	while(ls)
+	{
+		if(ls->filename[0] == '.' && !strchr(flag, 'a'))
+			ls = ls->next;
+		else
+		{
+			printf("%s %hu %s %s %lld %s %s\n", ls->mode, ls->nlink, ls->user, ls->group, ls->size, ls->time, ls->filename);
+			ls = ls->next;
+		}
+	}
+}
+void	print_ls(t_ls *ls, char *flag)
+{
+
+	if(flag != NULL)
+	{
+		if (strchr(flag, 'l'))
+			print_whole(ls, flag);
+		else
+			print_part(ls, flag);	
+	}
+	if(flag == NULL)
+		print_part(ls, flag);
+}
+	
+  
+void swap(t_ls *p1, t_ls *p2)
+{
+	int n;
+	n = -1;
+  p1->filename = p2->filename;
+  p1->user = p2->user;
+  p1->group = p2->group;
+  p1->time = p2->time;
+  p1->nlink = p2->nlink;
+  p1->size = p2->size;
+  p1->mtime = p2->mtime;
+  while(++n < 12)
+	p1->mode[n] = p2->mode[n];
+}
+  
+void    sort_by_ascii(t_ls **begin_list)
+{
+    t_ls   *i;
+    t_ls    *j;
+    t_ls    *temp;
+
+    i = *begin_list;
+    temp = malloc(sizeof(t_ls));
+    while (i)
+    {
+        j = i->next;
+        while (j)
+        {
+            if (strcmp(i->filename, j->filename))
+            {
+              swap(temp,i);
+              swap(i,j);
+              swap(j, temp);
+            }
+            j = j->next;
+        }
+        i = i->next;
+    }
+}
+  
+void    sort_by_time_ascii(t_ls **begin_list, char c)
+{
+    t_ls   *i;
+    t_ls    *j;
+    t_ls    *temp;
+
+    i = *begin_list;
+    temp = malloc(sizeof(t_ls));
+    while (i)
+    {
+        j = i->next;
+        while (j)
+        {
+            if ((i->mtime < j->mtime)
+				|| (c == 'a' && strcmp(i->filename, j->filename) > 0))
+            {
+              swap(temp,i);
+              swap(i,j);
+              swap(j, temp);
+            }
+            j = j->next;
+        }
+        i = i->next;
+    }
+}
+
+void	sort_by_rev(t_ls **ls)
+{
+	t_ls *root;
+	t_ls *node;
+	t_ls *next;
+
+	root = *ls;
+	node = 0;
+	while (root)
+	{
+		next = (*root).next;
+		(*root).next = node;
+		node = root;
+		root = next;
+	}
+	*ls = node;
+}
+
+void	use_flag_sort_linklist(t_ls **ls, char *flag)
+{
+	if(strchr(flag, 't'))
+		sort_by_time_ascii(ls, 't');
+	if(strchr(flag, 'r'))
+		sort_by_rev(ls);
+}
+int		check_flag(char *flag)
+{
+	char *str;
+	str = "laRrt";
+
+	if(*flag != '-')
+		return (0);
+	flag++;
+	while(*flag)
+	{
+		if(!strchr(str, *flag))
+		{
+			printf("usage: ls [-@lartR] [file ...]\n");
+			exit (0);
+		} 
+		flag++;
+	}
+	return (1);
+}
+int		check_filename(char *s, t_ls *ls)
+{
+	while(ls)
+	{
+		if(strcmp(ls->filename,s) == 0)
+			return (1);
+		ls = ls->next;
+	}
+	return (0);
+
+}
+int		check_filename_by_av(int ar, char **av, char *filename, int count)
+{
+		while(++count < ar)
+		{
+				if(strcmp(filename, av[count]) == 0)
+					return (1);
+		}
+		return (0);
+}
+
+void	remove_node(t_ls **begin_list, char *data_ref)
+{
+	t_ls *root;
+	t_ls *node;
+	t_ls *next;
+
+	root = *begin_list;
+	node = *begin_list;
+	while (root)
+	{
+		next = (*root).next;
+		if (strcmp(root->filename, data_ref) == 0)
+		{
+			if (root == *begin_list)
+			{
+				*begin_list = next;
+			}
+			node->next = next;
+			free(root);
+		}
+		node = root;
+		root = next;
+	}
+
+}
+lop0
+void	check_input_filename(int ar, char **av, t_ls **ls)
+{
+	int count;
+
+	t_ls *copy;
+	copy = *ls;
+	count = (av[1][0] == '-' ? 1 : 0);
+	while(++count < ar)
+	{
+		if(!(check_filename(av[count], *ls)))
+		{
+			printf("ls: %s: No such file or directory\n", av[1]);
+			exit(0);
+		}
+	}
+	count = (av[1][0] == '-' ? 1 : 0);	
+	while(*ls)
+	{
+		if(!check_filename_by_av(ar, av, (*ls)->filename, count))
+			remove_node(ls, (*ls)->filename);
+		else
+			ls = &(*ls)->next;
+	}	
+}
+
+int	main(int ar, char **av)
+{
+	DIR *dir;
+	struct dirent *ptr;
+	t_ls	*ls;
+
+	dir = opendir(".");
+	while((ptr = readdir(dir)) > 0)
+	{
+		create_linklist(&ls, strdup(ptr->d_name));
+	}
+	sort_by_time_ascii(&ls, 'a');
+	if(av[1])
+	{
+		if (check_flag(av[1]))
+			use_flag_sort_linklist(&ls, av[1] + 1);
+		if(av[1][0] != '-' || ar > 2)
+			check_input_filename(ar, av, &ls);
+	}
+	print_ls(ls, av[1]);
+	closedir(dir);
+}
+// paipai@Guans-MacBook-Pro LS % ls -.
+// ls: illegal option -- .
+// usage: ls [-@ABCFGHLOPRSTUWabcdefghiklmnopqrstuwx1%] [file ...]
