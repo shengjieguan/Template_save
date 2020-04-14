@@ -1,0 +1,156 @@
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <signal.h>
+#include <dirent.h>
+#include <fcntl.h>
+# include "libft/libft.h"
+
+typedef void    (*blt_func)(char *, char **);
+
+char *find_env(char **envv)
+{
+    char *env;
+    while(*envv)
+    {
+        if(ft_strncmp(*envv, "HOME=", 4)==0)
+        {
+           
+           env = ft_strjoin("~", *envv + 5);
+            break ;
+        }   
+        envv++;
+    }
+    return (env);
+}
+void    ft_pwd(char *command, char **envv)
+{
+    char buf[4097];
+
+    getcwd(buf, 4096);
+    puts(buf);
+    (void)command;
+    (void)envv;
+
+}
+void       ft_cd(char *command, char **envv)
+{
+    puts("ddsf");
+    struct stat st;
+    command += 3;
+if (command){
+    stat(command,&st);
+    if (S_ISDIR(st.st_mode))
+        chdir(command);
+    else{
+        if(ft_strchr(command, 32))
+            printf("too many arguments");
+        else
+            printf("[Error]: cd '%s': No such directory\n",command);
+    }
+}
+}
+void       ft_exit(char *command, char **envv)
+{
+    exit(1);
+
+}
+void       ft_setenv(char *command, char **envv)
+{
+    char **split;
+
+    command += 7;
+    // if(ft_strchr(command, '='))
+        split = ft_strsplit(command, '=');
+    // else
+    // {
+    //     puts("error");
+    //     return ;
+    // }
+            
+    while(*envv)
+    {
+        if(!ft_strcmp(ft_strsplit(*envv, '=')[0], split[0]))
+            break;
+        envv++;
+    }
+    if(*envv)
+        *envv = ft_strdup(command);
+    else
+    {
+            puts("error");
+            return ;
+    }
+}
+void       ft_unsetenv(char *command, char **envv)
+{
+    int i;
+
+    i = 0;
+    command += 9;
+    while(envv[i] && envv[i + 1])
+    {
+        if(!ft_strcmp(ft_strsplit(command, '=')[0], ft_strsplit(envv[i], '=')[0]))
+        {
+            //ft_strclr(envv[i]);
+            envv[i] = envv[i+1];
+        }
+        i++;
+    }
+    envv[i] = NULL;
+}
+void       ft_env(char *command, char **envv)
+{
+    while(*envv)
+    {
+        puts(*envv);
+        envv++;
+    }
+}
+static blt_func     *g_dispatch= (blt_func[]){ft_pwd, ft_cd, ft_exit, ft_env, ft_setenv, ft_unsetenv};
+
+void    exec_command(char *line, char **envv)
+{
+    int i;
+
+	i = 1;
+    (!ft_strcmp(line, "pwd")) && (i = 0);
+    (!ft_strncmp(line, "cd ", 3)) && (i = 1);
+    (!ft_strcmp(line, "exit")) && (i = 2);
+    (!ft_strcmp(line, "env")) && (i = 3);
+    (!ft_strncmp(line, "setenv ", 7)) && (i = 4);
+    (!ft_strncmp(line, "unsetenv ", 9)) && (i = 5);
+
+
+    printf("%d",i);
+    g_dispatch[i](line, envv);
+}
+void    copy_environ(char **envv, char **environ)
+{
+    int i;
+    int j;
+    i = -1;
+    while(environ[++i])
+       NULL;
+    envv = (char**)ft_memalloc(sizeof(char*)*i);
+    envv[i]= NULL;
+    while(--i >= 0)
+        envv[i] = ft_strdup(environ[i]);
+}
+int main(int ar, char **av, char **environ)
+{
+    char *line;
+    char **envv;
+    //env = find_env(envv);
+    copy_environ(envv, environ);
+    while(1)
+    {
+        get_next_line(0, &line);
+        exec_command(line, envv);
+    }
+    return (0);
+
+}
